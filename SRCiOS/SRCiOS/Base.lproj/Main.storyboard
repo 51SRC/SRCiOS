@@ -86,40 +86,21 @@
                                         <rect key="frame" x="0.0" y="164" width="80" height="49"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="0.63529411759999999" green="0.77647058820000003" blue="0.95294117649999999" alpha="1" colorSpace="calibratedRGB"/>
-                                        <state key="normal" title="开灯"/>
+                                        <state key="normal" backgroundImage="light_close"/>
                                         <connections>
                                             <action selector="buttonClickedAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bZC-Yv-m9X"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" tag="11" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0ag-1n-Vfm">
-                                        <rect key="frame" x="0.0" y="96" width="80" height="49"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" red="0.63529411759999999" green="0.77647058820000003" blue="0.95294117649999999" alpha="1" colorSpace="calibratedRGB"/>
-                                        <state key="normal" title="关灯"/>
-                                        <connections>
-                                            <action selector="buttonClickedAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="aG5-OL-Cub"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" tag="10" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ECw-qi-SgZ">
                                         <rect key="frame" x="0.0" y="256" width="80" height="49"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="0.63529411759999999" green="0.77647058820000003" blue="0.95294117649999999" alpha="1" colorSpace="calibratedRGB"/>
-                                        <state key="normal" title="喇叭"/>
+                                        <state key="normal" backgroundImage="light_close"/>
                                         <connections>
                                             <action selector="buttonClickedAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="YGe-eg-yze"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" tag="12" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ekC-Yn-Rhl">
-                                        <rect key="frame" x="0.0" y="344" width="80" height="49"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" red="0.63529411759999999" green="0.77647058820000003" blue="0.95294117649999999" alpha="1" colorSpace="calibratedRGB"/>
-                                        <state key="normal" title="关喇叭"/>
-                                        <connections>
-                                            <action selector="buttonClickedAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zHz-mD-obI"/>
-                                        </connections>
-                                    </button>
                                 </subviews>
-                                <color key="backgroundColor" red="0.68102894110000001" green="0.93333333330000001" blue="0.47092837370000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="80" id="BgA-mE-pZg"/>
                                 </constraints>
@@ -184,6 +165,8 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="buzzerBtton" destination="ECw-qi-SgZ" id="HNV-22-uJf"/>
+                        <outlet property="lightButton" destination="phw-DN-2BW" id="hfX-Cr-eYM"/>
                         <outlet property="serverIP" destination="p1U-sD-V7k" id="9lh-zo-gqY"/>
                         <outlet property="serverPort" destination="o7i-df-rx9" id="Rlx-pn-1aq"/>
                         <outlet property="textView" destination="QeJ-Ij-21J" id="h6c-Bo-81k"/>
@@ -194,4 +177,7 @@
             <point key="canvasLocation" x="136.80000000000001" y="133.5832083958021"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="light_close" width="64" height="64"/>
+    </resources>
 </document>

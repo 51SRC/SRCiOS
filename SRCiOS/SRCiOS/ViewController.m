@@ -18,6 +18,13 @@
 
 @property (weak, nonatomic) IBOutlet UITextField *serverPort;
 
+@property (weak, nonatomic) IBOutlet UIButton *buzzerBtton;
+@property (weak, nonatomic) IBOutlet UIButton *lightButton;
+
+@property (strong ,nonatomic) NSThread *heartThread;
+
+@property (assign, nonatomic) BOOL vehicleStatus_Buzzer;
+@property (assign, nonatomic) BOOL vehicleStatus_Light;
 
 @end
 
@@ -27,6 +34,10 @@
     [super viewDidLoad];
     
     [self connectAction];
+    
+    
+    [self customerUIs];
+
     // Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -54,6 +65,14 @@
         }else
         {
             [self textViewAddText:@"connect ..."];
+            
+            if (!self.heartThread) {
+                self.heartThread = [[NSThread alloc] initWithTarget:self selector:@selector(sendHeartBeat) object:nil];
+            }
+            
+            [self.heartThread start];
+            
+
         }
    
     }else{
@@ -72,7 +91,72 @@
 //    Byte *resverByte = (Byte *)[data bytes];
     NSString * newMessage = [self hexStringFromData:data];
     [self showData: newMessage];
+    [self initVehicleStatusWithData:data];
+    
     [_socket readDataWithTimeout:-1 tag:0];
+}
+
+
+-(void)initVehicleStatusWithData:(NSData *)data{
+    
+    if ([data length] == 7) {
+        
+        Byte *carData = (Byte *)[data bytes];
+        
+        if ((carData[0]&0xff) ==0x7E &&(carData[6]&0xff) == 0x7E) {
+            
+            int CRCSum = 0;
+            for(int i=1;i<[data length]-2;i++){
+                CRCSum+=carData[i];
+            }
+            CRCSum =CRCSum -1;
+            
+            if ((carData[5]&0xff) != CRCSum ||(carData[2]&0xff) != 0x02) {
+                [self showData: @"check data error"];
+                
+                return;
+            }
+            
+            [self initVehicleUIWithOperateID: carData[1] status:carData[4] AndeHightData:carData[3] LowData:carData[4]];
+        }
+        
+        
+    }
+}
+
+
+
+-(void)initVehicleUIWithOperateID:(Byte)opid status:(Byte)sts AndeHightData:(Byte)hightData LowData: (Byte)lowData{
+    UInt32 newData = 0;
+    
+    switch (opid) {
+        case 2:
+            if (sts == 0x02) {//开
+                _vehicleStatus_Buzzer = true;
+            }else if (sts == 0x01){
+                _vehicleStatus_Buzzer = false;
+            }
+            break;
+        case 3:
+            if (sts == 0x02) {//开
+                _vehicleStatus_Light = true;
+            }else if (sts == 0x01){
+                _vehicleStatus_Light = false;
+            }
+            break;
+        
+        default:
+            break;
+    }
+    
+    [self customerUIs];
+}
+
+-(void)customerUIs{
+    [self.lightButton setBackgroundImage:[UIImage imageNamed: _vehicleStatus_Light ? @"light_open":@"light_close"] forState:UIControlStateNormal];
+    
+    [self.buzzerBtton setBackgroundImage:[UIImage imageNamed: _vehicleStatus_Buzzer ?@"buzzer_open" : @"buzzer_colse"] forState:UIControlStateNormal];
+    
 }
 
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err
@@ -203,18 +287,11 @@
             [self setDataWithID:0x01 and:0x05];
             break;
         case 9:
-            [self setDataWithID:0x03 and:0x02];//灯光开
+            [self setDataWithID:0x03 and: _vehicleStatus_Light ? 0x01 : 0x02];//灯光开
             break;
         case 10:
-            [self setDataWithID:0x02 and:0x02];//蜂鸣器开
+            [self setDataWithID:0x02 and: _vehicleStatus_Buzzer ? 0x01 : 0x02];//蜂鸣器开
             break;
-        case 11:
-            [self setDataWithID:0x03 and:0x01];//灯关
-            break;
-        case 12:
-            [self setDataWithID:0x02 and:0x01];//蜂鸣器关
-            break;
-            
             
         default:
             
@@ -223,6 +300,24 @@
     
 
 }
+
+
+//心跳包
+-(void)sendHeartBeat{
+    //    Byte keep_alive_data[] = {0x7E,0x00,0x01,0x00,0x00,0x00,0x7E};
+    [NSThread sleepForTimeInterval:5.0f];
+    
+    while (true) {
+        [NSThread sleepForTimeInterval:30.0f];
+        
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            //Update UI in UI thread here
+            [self setDataWithID:0x00 and:0x00];
+        });
+    }
+}
+
+
 
 
 - (void)didReceiveMemoryWarning {
