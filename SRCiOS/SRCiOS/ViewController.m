@@ -68,9 +68,10 @@
             
             if (!self.heartThread) {
                 self.heartThread = [[NSThread alloc] initWithTarget:self selector:@selector(sendHeartBeat) object:nil];
+                [self.heartThread start];
+
             }
             
-            [self.heartThread start];
             
 
         }
@@ -162,6 +163,7 @@
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err
 {
     _socket = nil;
+    self.heartThread = nil;
     [self showData: @"connect error"];
     return ;
 }
