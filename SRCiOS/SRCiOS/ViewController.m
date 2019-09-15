@@ -6,6 +6,10 @@
 //  Copyright © 2018年 SmartCar. All rights reserved.
 //
 
+
+//7E330103010002607E   开灯
+//7E330102010002A47E 开蜂鸣器
+
 #import "ViewController.h"
 #import "GCDAsyncSocket.h"
 
@@ -127,12 +131,12 @@ static const unsigned char SRCTail = 0x7E;
                 CRCSum+=carData[i];
             }
             CRCSum = CRCSum -1;
-            
-            if ((carData[SRCDataLength-2]&0xff) != CRCSum ||(carData[4]&0xff) != SRCDataSourceUp) {
-                [self showData: @"check data error"];
-                
-                return;
-            }
+            //TODO
+//            if ((carData[SRCDataLength-2]&0xff) != CRCSum ||(carData[4]&0xff) != SRCDataSourceUp) {
+//                [self showData: @"check data error"];
+//
+//                return;
+//            }
             
             [self getVehicleDataWithDeviceID:SRCDeviceID ComType: SRCCommunicationType Commond: carData[3] HightData:carData[5] LowData:carData[6] ];
         }
@@ -192,7 +196,7 @@ static const unsigned char SRCTail = 0x7E;
         //        carData[SRCDataLength - 2] = CRCSum;
 
         unsigned char cutData[SRCDataLength-3] = { carData[1] , carData[2] , carData[3] , carData[4] , carData[5] , carData[6] };
-        carData[SRCDataLength - 2] = crc8_chk_value(cutData,4);
+        carData[SRCDataLength - 2] = crc8_chk_value(cutData,6);
         
         NSData *d1 = [NSData dataWithBytes:carData length:sizeof(carData)];
         
@@ -314,7 +318,7 @@ static const unsigned char SRCTail = 0x7E;
     [NSThread sleepForTimeInterval:5.0f];
     
     while (true) {
-        [NSThread sleepForTimeInterval:30.0f];
+        [NSThread sleepForTimeInterval:5.0f];
         
         dispatch_sync(dispatch_get_main_queue(), ^{
             //Update UI in UI thread here
