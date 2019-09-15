@@ -26,7 +26,23 @@
 @property (assign, nonatomic) BOOL vehicleStatus_Buzzer;
 @property (assign, nonatomic) BOOL vehicleStatus_Light;
 
+
 @end
+
+//经常改变的数据
+static const unsigned char SRCDeviceID = 0x33;
+static const unsigned char SRCCommunicationType = 0x02;
+
+//0x01：上位机下发 0x02：下位机上传
+static const unsigned char SRCDataSourceDown = 0x01;
+static const unsigned char SRCDataSourceUp = 0x02;
+
+static const unsigned char SRCDataLength = 9;
+static const unsigned char SRCHeader = 0x7E;
+static const unsigned char SRCTail = 0x7E;
+
+
+
 
 @implementation ViewController
 
@@ -92,33 +108,33 @@
 //    Byte *resverByte = (Byte *)[data bytes];
     NSString * newMessage = [self hexStringFromData:data];
     [self showData: newMessage];
-    [self initVehicleStatusWithData:data];
+    [self getVehicleData:data];
     
     [_socket readDataWithTimeout:-1 tag:0];
 }
 
 
--(void)initVehicleStatusWithData:(NSData *)data{
+-(void)getVehicleData:(NSData *)data{
     
-    if ([data length] == 7) {
+    if ([data length] == SRCDataLength) {
         
         Byte *carData = (Byte *)[data bytes];
         
-        if ((carData[0]&0xff) ==0x7E &&(carData[6]&0xff) == 0x7E) {
+        if ((carData[0]&0xff) == SRCHeader &&(carData[SRCDataLength -1]&0xff) == SRCTail) {
             
             int CRCSum = 0;
-            for(int i=1;i<[data length]-2;i++){
+            for(int i=1; i<[data length]-2; i++){
                 CRCSum+=carData[i];
             }
-            CRCSum =CRCSum -1;
+            CRCSum = CRCSum -1;
             
-            if ((carData[5]&0xff) != CRCSum ||(carData[2]&0xff) != 0x02) {
+            if ((carData[SRCDataLength-2]&0xff) != CRCSum ||(carData[4]&0xff) != SRCDataSourceUp) {
                 [self showData: @"check data error"];
                 
                 return;
             }
             
-            [self initVehicleUIWithOperateID: carData[1] status:carData[4] AndeHightData:carData[3] LowData:carData[4]];
+            [self getVehicleDataWithDeviceID:SRCDeviceID ComType: SRCCommunicationType Commond: carData[3] HightData:carData[5] LowData:carData[6] ];
         }
         
         
@@ -127,21 +143,20 @@
 
 
 
--(void)initVehicleUIWithOperateID:(Byte)opid status:(Byte)sts AndeHightData:(Byte)hightData LowData: (Byte)lowData{
-    UInt32 newData = 0;
+-(void)getVehicleDataWithDeviceID: (Byte)deviceID  ComType: (Byte)comType Commond: (Byte)commond HightData:(Byte)hightData LowData: (Byte)lowData{
     
-    switch (opid) {
+    switch (commond) {
         case 2:
-            if (sts == 0x02) {//开
+            if (lowData == 0x02) {//开
                 _vehicleStatus_Buzzer = true;
-            }else if (sts == 0x01){
+            }else if (lowData == 0x01){
                 _vehicleStatus_Buzzer = false;
             }
             break;
         case 3:
-            if (sts == 0x02) {//开
+            if (lowData == 0x02) {//开
                 _vehicleStatus_Light = true;
-            }else if (sts == 0x01){
+            }else if (lowData == 0x01){
                 _vehicleStatus_Light = false;
             }
             break;
@@ -168,24 +183,28 @@
     return ;
 }
 
--(void)setDataWithID:(Byte)ID and:(Byte)OperatID{
+
+-(void)setVehicleData:(Byte)commond LowData:(Byte)lowData{
     if ([_socket isConnected] ) {
-        unsigned char carData[7] = {0x7E,ID,0x01,0x00,OperatID,0x00,0x7E};
+        unsigned char carData[SRCDataLength] = { SRCHeader, SRCDeviceID,SRCCommunicationType, commond, SRCDataSourceDown, 0x00, lowData, 0x00, SRCTail};
         
-        unsigned char  CRCSum=carData[1]+carData[2]+carData[3]+carData[4]-0x01;
-        
-        carData[5]= CRCSum;
-        
+       // unsigned char  CRCSum = carData[1] + carData[2] + carData[3] + carData[4] + carData[5] + carData[6] - 0x01;
+        //        carData[SRCDataLength - 2] = CRCSum;
+
+        unsigned char cutData[SRCDataLength-3] = { carData[1] , carData[2] , carData[3] , carData[4] , carData[5] , carData[6] };
+        carData[SRCDataLength - 2] = crc8_chk_value(cutData,4);
         
         NSData *d1 = [NSData dataWithBytes:carData length:sizeof(carData)];
         
+        [_socket writeData:d1 withTimeout:-1 tag:0];
+
         NSString *str =  [self hexStringFromData:d1];
         
-        [_socket writeData:d1 withTimeout:-1 tag:0];
         
         [self showData: str];
+        
     } else {
-        [self showData: @"connect close"];
+        [self showData: @"REMOTE connect close"];
     }
   
 
@@ -273,26 +292,11 @@
         case 3:
             [self  disconnectAction];
             break;
-        case 4:
-            [self setDataWithID:0x01 and:0x01];//开启
-            break;
-        case 5:
-            [self setDataWithID:0x01 and:0x02];//关闭
-            break;
-        case 6:
-            [self setDataWithID:0x01 and:0x03];//上下左右停
-            break;
-        case 7:
-            [self setDataWithID:0x01 and:0x04];
-            break;
-        case 8:
-            [self setDataWithID:0x01 and:0x05];
-            break;
         case 9:
-            [self setDataWithID:0x03 and: _vehicleStatus_Light ? 0x01 : 0x02];//灯光开
+            [self setVehicleData:0x03 LowData: _vehicleStatus_Light ? 0x01 : 0x02];//灯光开
             break;
         case 10:
-            [self setDataWithID:0x02 and: _vehicleStatus_Buzzer ? 0x01 : 0x02];//蜂鸣器开
+            [self setVehicleData:0x02 LowData: _vehicleStatus_Buzzer ? 0x01 : 0x02];//蜂鸣器开
             break;
             
         default:
@@ -314,11 +318,31 @@
         
         dispatch_sync(dispatch_get_main_queue(), ^{
             //Update UI in UI thread here
-            [self setDataWithID:0x00 and:0x00];
+            [self setVehicleData:0x00 LowData:0x00];
         });
     }
 }
 
+
+unsigned char crc8_chk_value(unsigned char *message, unsigned char len)
+{
+    uint crc;
+    uint i;
+    crc = 0;
+    while(len--)
+    {
+        crc ^= *message++;
+        for(i = 0;i < 8;i++)
+        {
+            if(crc & 0x01)
+            {
+                crc = (crc >> 1) ^ 0x8c;
+            }
+            else crc >>= 1;
+        }
+    }
+    return crc;
+}
 
 
 
