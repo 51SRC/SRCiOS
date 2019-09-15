@@ -31,7 +31,7 @@
 
 //经常改变的数据
 static const unsigned char SRCDeviceID = 0x33;
-static const unsigned char SRCCommunicationType = 0x02;
+static const unsigned char SRCCommunicationType = 0x01;
 
 //0x01：上位机下发 0x02：下位机上传
 static const unsigned char SRCDataSourceDown = 0x01;
