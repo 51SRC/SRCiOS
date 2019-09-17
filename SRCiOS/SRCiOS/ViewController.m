@@ -86,14 +86,6 @@ static const unsigned char SRCTail = 0x7E;
         {
             [self textViewAddText:@"connect ..."];
             
-            if (!self.heartThread) {
-                self.heartThread = [[NSThread alloc] initWithTarget:self selector:@selector(sendHeartBeat) object:nil];
-                [self.heartThread start];
-
-            }
-            
-            
-
         }
    
     }else{
@@ -104,6 +96,13 @@ static const unsigned char SRCTail = 0x7E;
 -(void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port
 {
     [self textViewAddText:[NSString stringWithFormat:@"connect to  %@",host]];
+    
+    if (!self.heartThread) {
+        self.heartThread = [[NSThread alloc] initWithTarget:self selector:@selector(sendHeartBeat) object:nil];
+        [self.heartThread start];
+        
+    }
+    
     [_socket readDataWithTimeout:-1 tag:0];
 }
 -(void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag
@@ -182,7 +181,7 @@ static const unsigned char SRCTail = 0x7E;
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err
 {
     _socket = nil;
-    self.heartThread = nil;
+    [self.heartThread cancel];
     [self showData: @"connect error"];
     return ;
 }
@@ -284,6 +283,11 @@ static const unsigned char SRCTail = 0x7E;
     
     return [self dataWithReverse:valData];
 }
+
+- (IBAction)clearBoard:(UIButton *)sender {
+    self.textView.text =@"";
+}
+
 
 - (IBAction)buttonClickedAction:(UIButton *)sender {
     NSInteger sendertag = sender.tag;
