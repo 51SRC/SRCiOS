@@ -55,6 +55,8 @@ static const unsigned char SRCTail = 0x7E;
     
     [self connectAction];
     
+//    [self testchec];
+    
     
     [self customerUIs];
 
@@ -130,12 +132,12 @@ static const unsigned char SRCTail = 0x7E;
                 CRCSum+=carData[i];
             }
             CRCSum = CRCSum -1;
-            //TODO
-//            if ((carData[SRCDataLength-2]&0xff) != CRCSum ||(carData[4]&0xff) != SRCDataSourceUp) {
-//                [self showData: @"check data error"];
-//
-//                return;
-//            }
+            
+            if ((carData[SRCDataLength-2]&0xff) != CRCSum ||(carData[4]&0xff) != SRCDataSourceUp) {
+                [self showData: @"check data error"];
+
+                return;
+            }
             
             [self getVehicleDataWithDeviceID:SRCDeviceID ComType: SRCCommunicationType Commond: carData[3] HightData:carData[5] LowData:carData[6] ];
         }
@@ -182,6 +184,7 @@ static const unsigned char SRCTail = 0x7E;
 {
     _socket = nil;
     [self.heartThread cancel];
+    self.heartThread = nil;
     [self showData: @"connect error"];
     return ;
 }
@@ -190,9 +193,6 @@ static const unsigned char SRCTail = 0x7E;
 -(void)setVehicleData:(Byte)commond LowData:(Byte)lowData{
     if ([_socket isConnected] ) {
         unsigned char carData[SRCDataLength] = { SRCHeader, SRCDeviceID,SRCCommunicationType, commond, SRCDataSourceDown, 0x00, lowData, 0x00, SRCTail};
-        
-       // unsigned char  CRCSum = carData[1] + carData[2] + carData[3] + carData[4] + carData[5] + carData[6] - 0x01;
-        //        carData[SRCDataLength - 2] = CRCSum;
 
         unsigned char cutData[SRCDataLength-3] = { carData[1] , carData[2] , carData[3] , carData[4] , carData[5] , carData[6] };
         carData[SRCDataLength - 2] = crc8_chk_value(cutData,6);
@@ -268,7 +268,7 @@ static const unsigned char SRCTail = 0x7E;
         NSData *endData = [srcData subdataWithRange:end];
         [dstData replaceBytesInRange:begin withBytes:endData.bytes];
         [dstData replaceBytesInRange:end withBytes:beginData.bytes];
-    }//for
+    }
     
     return dstData;
 }
@@ -321,7 +321,7 @@ static const unsigned char SRCTail = 0x7E;
     //    Byte keep_alive_data[] = {0x7E,0x00,0x01,0x00,0x00,0x00,0x7E};
     [NSThread sleepForTimeInterval:5.0f];
     
-    while (true) {
+    while (self.heartThread) {
         [NSThread sleepForTimeInterval:5.0f];
         
         dispatch_sync(dispatch_get_main_queue(), ^{
@@ -330,7 +330,6 @@ static const unsigned char SRCTail = 0x7E;
         });
     }
 }
-
 
 unsigned char crc8_chk_value(unsigned char *message, unsigned char len)
 {
@@ -351,8 +350,6 @@ unsigned char crc8_chk_value(unsigned char *message, unsigned char len)
     }
     return crc;
 }
-
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
