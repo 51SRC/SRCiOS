@@ -127,13 +127,19 @@ static const unsigned char SRCTail = 0x7E;
         
         if ((carData[0]&0xff) == SRCHeader &&(carData[SRCDataLength -1]&0xff) == SRCTail) {
             
-            int CRCSum = 0;
-            for(int i=1; i<[data length]-2; i++){
-                CRCSum+=carData[i];
-            }
-            CRCSum = CRCSum -1;
+            
+             unsigned char cData[SRCDataLength-3] = { carData[1] , carData[2] , carData[3] , carData[4] , carData[5] , carData[6] };
+            
+            int CRCSum = crc8_chk_value(cData,6);
+            
+            
+//            for(int i=1; i<[data length]-2; i++){
+//                CRCSum+=carData[i];
+//            }
+//            CRCSum = CRCSum -1;
             
             if ((carData[SRCDataLength-2]&0xff) != CRCSum ||(carData[4]&0xff) != SRCDataSourceUp) {
+//            if ((carData[4]&0xff) != SRCDataSourceUp) {
                 [self showData: @"check data error"];
 
                 return;
