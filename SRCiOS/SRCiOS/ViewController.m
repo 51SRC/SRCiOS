@@ -15,6 +15,9 @@
 
 @interface ViewController ()
 
+@property (weak, nonatomic) IBOutlet UILabel *tempNum;
+@property (weak, nonatomic) IBOutlet UILabel *humiNum;
+
 @property (strong, nonatomic) IBOutlet UITextView *textView;
 @property (strong, nonatomic) GCDAsyncSocket *socket;
 @property (assign, nonatomic) uint8_t *array;
@@ -29,6 +32,8 @@
 
 @property (assign, nonatomic) BOOL vehicleStatus_Buzzer;
 @property (assign, nonatomic) BOOL vehicleStatus_Light;
+@property (assign, nonatomic) NSUInteger temp;
+@property (assign, nonatomic) NSUInteger humi;
 
 
 @end
@@ -52,6 +57,9 @@ static const unsigned char SRCTail = 0x7E;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.humi = 0;
+    self.temp = 0;
+
     
     [self connectAction];
     
@@ -171,6 +179,11 @@ static const unsigned char SRCTail = 0x7E;
                 _vehicleStatus_Light = false;
             }
             break;
+        case 4:
+            self.temp = hightData;
+            self.humi = lowData;
+            
+            break;
         
         default:
             break;
@@ -183,7 +196,8 @@ static const unsigned char SRCTail = 0x7E;
     [self.lightButton setBackgroundImage:[UIImage imageNamed: _vehicleStatus_Light ? @"light_open":@"light_close"] forState:UIControlStateNormal];
     
     [self.buzzerBtton setBackgroundImage:[UIImage imageNamed: _vehicleStatus_Buzzer ?@"buzzer_open" : @"buzzer_colse"] forState:UIControlStateNormal];
-    
+    self.tempNum.text = [NSString stringWithFormat:@"温度：%lu",(unsigned long)self.temp];
+    self.humiNum.text = [NSString stringWithFormat:@"湿度：%lu",(unsigned long)self.humi];
 }
 
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err
