@@ -327,8 +327,8 @@ static const unsigned char SRCTail = 0x7E;
     //    Byte keep_alive_data[] = {0x7E,0x00,0x01,0x00,0x00,0x00,0x7E};
     [NSThread sleepForTimeInterval:5.0f];
     
-    while (self.heartThread) {
-        [NSThread sleepForTimeInterval:5.0f];
+    while (self.heartThread !=nil) {
+        [NSThread sleepForTimeInterval:10.0f];
         
         dispatch_sync(dispatch_get_main_queue(), ^{
             //Update UI in UI thread here
