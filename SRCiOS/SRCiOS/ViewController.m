@@ -55,6 +55,18 @@ static const unsigned char SRCTail = 0x7E;
 
 @implementation ViewController
 
+- (void)viewWillAppear:(BOOL)animated{
+ 
+ [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectAction)name:UIApplicationWillEnterForegroundNotification object:nil];
+
+}
+
+- (void)viewDidDisappear:(BOOL)animated{
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.humi = 0;
@@ -342,7 +354,7 @@ static const unsigned char SRCTail = 0x7E;
     [NSThread sleepForTimeInterval:5.0f];
     
     while (self.heartThread !=nil) {
-        [NSThread sleepForTimeInterval:10.0f];
+        [NSThread sleepForTimeInterval:5.0f];
         
         dispatch_sync(dispatch_get_main_queue(), ^{
             //Update UI in UI thread here
