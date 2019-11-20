@@ -225,6 +225,8 @@ static const unsigned char SRCTail = 0x7E;
 -(void)setVehicleData:(Byte)commond LowData:(Byte)lowData{
     if ([_socket isConnected] ) {
         unsigned char carData[SRCDataLength] = { SRCHeader, SRCDeviceID,SRCCommunicationType, commond, SRCDataSourceDown, 0x00, lowData, 0x00, SRCTail};
+        
+        
 
         unsigned char cutData[SRCDataLength-3] = { carData[1] , carData[2] , carData[3] , carData[4] , carData[5] , carData[6] };
         carData[SRCDataLength - 2] = crc8_chk_value(cutData,6);

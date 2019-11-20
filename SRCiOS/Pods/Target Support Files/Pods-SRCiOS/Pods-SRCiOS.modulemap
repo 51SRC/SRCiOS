@@ -1,0 +1,6 @@
+framework module Pods_SRCiOS {
+  umbrella header "Pods-SRCiOS-umbrella.h"
+
+  export *
+  module * { export * }
+}
