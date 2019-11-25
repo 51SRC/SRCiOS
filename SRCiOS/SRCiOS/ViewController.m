@@ -12,6 +12,7 @@
 
 #import "ViewController.h"
 #import "GCDAsyncSocket.h"
+#import "WebViewJavascriptBridge.h"
 
 @interface ViewController ()
 
@@ -34,6 +35,7 @@
 @property (assign, nonatomic) BOOL vehicleStatus_Light;
 @property (assign, nonatomic) NSUInteger temp;
 @property (assign, nonatomic) NSUInteger humi;
+@property WebViewJavascriptBridge* bridge;
 
 
 @end
@@ -71,6 +73,24 @@ static const unsigned char SRCTail = 0x7E;
     [super viewDidLoad];
     self.humi = 0;
     self.temp = 0;
+
+    
+    
+    UIWebView *webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:webView];
+    
+    NSString *htmlPath = [[NSBundle mainBundle] pathForResource:@"test" ofType:@"html"];
+    NSString *appHtml = [NSString stringWithContentsOfFile:htmlPath encoding:NSUTF8StringEncoding error:nil];
+    NSURL *baseURL = [NSURL fileURLWithPath:htmlPath];
+    [webView loadHTMLString:appHtml baseURL:baseURL];
+
+    // 开启日志
+      [WebViewJavascriptBridge enableLogging];
+    
+    // 给哪个webview建立JS与OjbC的沟通桥梁
+    self.bridge = [WebViewJavascriptBridge bridgeForWebView:webView];
+    [self.bridge setWebViewDelegate:self];
+    
 
     
     [self connectAction];

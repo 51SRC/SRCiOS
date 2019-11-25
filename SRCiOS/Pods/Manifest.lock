@@ -1,3 +1,16 @@
-PODFILE CHECKSUM: 72f05251af03fdcbdd855cfbf49ee68c4d4a13d3
+PODS:
+  - WebViewJavascriptBridge (6.0.3)
+
+DEPENDENCIES:
+  - WebViewJavascriptBridge (~> 6.0)
+
+SPEC REPOS:
+  trunk:
+    - WebViewJavascriptBridge
+
+SPEC CHECKSUMS:
+  WebViewJavascriptBridge: 7f5bc4d3581e672e8f32bd0f812d54bc69bb8e29
+
+PODFILE CHECKSUM: 45b1d5cd5dff4464991c6a037a1584a52d05f59c
 
 COCOAPODS: 1.8.4
