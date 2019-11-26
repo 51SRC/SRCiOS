@@ -6,6 +6,6 @@ target 'SRCiOS' do
   use_frameworks!
 
   # Pods for SRCiOS
-  pod 'WebViewJavascriptBridge', '~> 6.0'
+ # pod 'WebViewJavascriptBridge', '~> 6.0'
 
 end
