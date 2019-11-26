@@ -35,6 +35,8 @@
 @property (assign, nonatomic) BOOL vehicleStatus_Light;
 @property (assign, nonatomic) NSUInteger temp;
 @property (assign, nonatomic) NSUInteger humi;
+@property (weak, nonatomic) IBOutlet UITextField *deviceIDLable;
+
 @property WebViewJavascriptBridge* bridge;
 
 
@@ -69,11 +71,7 @@ static const unsigned char SRCTail = 0x7E;
 
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.humi = 0;
-    self.temp = 0;
-
+-(void)testwebview{
     
     
     UIWebView *webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
@@ -91,6 +89,16 @@ static const unsigned char SRCTail = 0x7E;
     self.bridge = [WebViewJavascriptBridge bridgeForWebView:webView];
     [self.bridge setWebViewDelegate:self];
     
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.humi = 0;
+    self.temp = 0;
+    
+    self.deviceIDLable.text = [NSString  stringWithFormat:@"%d",SRCDeviceID];
+
+  //  [self testwebview];
 
     
     [self connectAction];
@@ -185,7 +193,7 @@ static const unsigned char SRCTail = 0x7E;
                 return;
             }
             
-            [self getVehicleDataWithDeviceID:SRCDeviceID ComType: SRCCommunicationType Commond: carData[3] HightData:carData[5] LowData:carData[6] ];
+            [self getVehicleDataWithDeviceID: self.deviceIDLable.text.integerValue ComType: SRCCommunicationType Commond: carData[3] HightData:carData[5] LowData:carData[6] ];
         }
         
         
@@ -244,7 +252,7 @@ static const unsigned char SRCTail = 0x7E;
 
 -(void)setVehicleData:(Byte)commond LowData:(Byte)lowData{
     if ([_socket isConnected] ) {
-        unsigned char carData[SRCDataLength] = { SRCHeader, SRCDeviceID,SRCCommunicationType, commond, SRCDataSourceDown, 0x00, lowData, 0x00, SRCTail};
+        unsigned char carData[SRCDataLength] = { SRCHeader, self.deviceIDLable.text.integerValue,SRCCommunicationType, commond, SRCDataSourceDown, 0x00, lowData, 0x00, SRCTail};
         
         
 
