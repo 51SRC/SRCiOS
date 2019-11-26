@@ -98,7 +98,7 @@ static const unsigned char SRCTail = 0x7E;
     
     self.deviceIDLable.text = [NSString  stringWithFormat:@"%d",SRCDeviceID];
 
-  //  [self testwebview];
+    [self testwebview];
 
     
     [self connectAction];
