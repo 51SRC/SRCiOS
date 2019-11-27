@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0D77116511CAC1321C75299B /* Pods_SRCiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7711F08409FF52EC341664AC /* Pods_SRCiOS.framework */; };
 		555E9DB6238D7E4800B41116 /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = 555E9DB5238D7E4800B41116 /* test.html */; };
 		55F9B15C232DFE2200B2B695 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 55F9B15B232DFE2200B2B695 /* AppDelegate.m */; };
 		55F9B15F232DFE2200B2B695 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55F9B15E232DFE2200B2B695 /* ViewController.m */; };
@@ -17,9 +16,12 @@
 		55F9B16A232DFE2300B2B695 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 55F9B169232DFE2300B2B695 /* main.m */; };
 		55F9B174232DFEC600B2B695 /* GCDAsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 55F9B172232DFEC600B2B695 /* GCDAsyncUdpSocket.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		55F9B175232DFEC600B2B695 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 55F9B173232DFEC600B2B695 /* GCDAsyncSocket.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		FB4B6A83F33550C0D1F2E4A8 /* libPods-SRCiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3436956E666329ADF832C23A /* libPods-SRCiOS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		18C53C19238E209700E0418B /* WebViewJavascriptBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebViewJavascriptBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3436956E666329ADF832C23A /* libPods-SRCiOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SRCiOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		555E9DB5238D7E4800B41116 /* test.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = test.html; sourceTree = "<group>"; };
 		55F9B157232DFE2200B2B695 /* SRCiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SRCiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		55F9B15A232DFE2200B2B695 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -35,7 +37,6 @@
 		55F9B171232DFEC600B2B695 /* GCDAsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncUdpSocket.h; sourceTree = "<group>"; };
 		55F9B172232DFEC600B2B695 /* GCDAsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncUdpSocket.m; sourceTree = "<group>"; };
 		55F9B173232DFEC600B2B695 /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncSocket.m; sourceTree = "<group>"; };
-		7711F08409FF52EC341664AC /* Pods_SRCiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRCiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9320868A5CFE8A052FA9BE98 /* Pods-SRCiOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRCiOS.debug.xcconfig"; path = "Target Support Files/Pods-SRCiOS/Pods-SRCiOS.debug.xcconfig"; sourceTree = "<group>"; };
 		BE8F1147202509EDFB0CC153 /* Pods-SRCiOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRCiOS.release.xcconfig"; path = "Target Support Files/Pods-SRCiOS/Pods-SRCiOS.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -45,7 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0D77116511CAC1321C75299B /* Pods_SRCiOS.framework in Frameworks */,
+				FB4B6A83F33550C0D1F2E4A8 /* libPods-SRCiOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,7 +104,8 @@
 		F3EBDE8F603703BD8DD62547 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				7711F08409FF52EC341664AC /* Pods_SRCiOS.framework */,
+				18C53C19238E209700E0418B /* WebViewJavascriptBridge.framework */,
+				3436956E666329ADF832C23A /* libPods-SRCiOS.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
